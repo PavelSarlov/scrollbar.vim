@@ -13,7 +13,7 @@ function! scrollbar#Calculate() abort
 
       let scroll_pos_coef = 1.0 * line('w0') / lines
       let line_pos = win_top + min([max([float2nr(ceil(scroll_pos_coef * win_height)), 1]), win_height - scrollbar_height + 1]) - 1
-      let col_pos = win_left + win_width - 1
+      let col_pos = win_left + win_width
 
       let bar = repeat('▐', scrollbar_height)
 
