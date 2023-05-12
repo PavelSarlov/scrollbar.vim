@@ -7,7 +7,5 @@ command! ScrollbarDisable call scrollbar#Disable()
 
 augroup scrollbar
   autocmd!
-  autocmd VimEnter * call scrollbar#Setup()
-  autocmd CursorMoved,CursorMovedI,TextChanged,TextChangedI,TextChangedP * call scrollbar#Show()
+  autocmd VimEnter,CursorMoved,CursorMovedI,TextChanged,TextChangedI,TextChangedP * call scrollbar#Setup()
 augroup END
-

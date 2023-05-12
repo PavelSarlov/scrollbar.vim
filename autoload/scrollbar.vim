@@ -5,14 +5,14 @@ function! scrollbar#Calculate() abort
       let cur_line = line('.')
 
       if lines <= win_height
-            return []
+            return [[], {}]
       endif
 
       let scrollbar_scale = 1.0 * win_height / lines
       let scrollbar_height = max([float2nr(ceil(scrollbar_scale * win_height)), 1])
 
       let scroll_pos_coef = 1.0 * line('w0') / lines
-      let line_pos = min([max([float2nr(ceil(scroll_pos_coef * win_height)), 1]), win_height - scrollbar_height + 1])
+      let line_pos = win_top + min([max([float2nr(ceil(scroll_pos_coef * win_height)), 1]), win_height - scrollbar_height + 1]) - 1
       let col_pos = win_left + win_width - 1
 
       let bar = repeat('▐', scrollbar_height)
@@ -38,8 +38,7 @@ function! scrollbar#Show() abort
             let b:scrollbar_popup_id = popup_create(bar, options)
             call popup_show(b:scrollbar_popup_id)
       catch
-            echomsg v:exception
-            call scrollbar#Disable()
+            echomsg "Oops! Scrollbar failed with " . v:exception
       endtry
 endfunction
 
