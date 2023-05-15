@@ -3,6 +3,13 @@ function! scrollbar#Calculate() abort
       let [win_width, win_height] = [winwidth(0), winheight(0)]
       let lines = line('$')
       let cur_line = line('.')
+      let folds = scrollbar#GetClosedFolds()
+
+      echomsg folds
+
+      for fold in folds
+           let lines = lines - fold.lines 
+      endfor
 
       if lines <= win_height
             return [[], {}]
@@ -71,3 +78,24 @@ function! scrollbar#Enable() abort
       call scrollbar#Setup()
 endfunction
 
+function! scrollbar#GetClosedFolds() abort
+      let view = winsaveview()
+      let keepj = 'keepj norm!'
+      exe keepj 'gg'
+      let folds = []
+      let cur_line = line('.')
+      while 1
+            if foldclosed(cur_line)
+                  let fold_end = foldclosedend(cur_line)
+                  call add(folds, { 'start': cur_line, 'end': fold_end, 'lines': fold_end - cur_line })
+            endif
+            exe keepj 'zj'
+            if line('.') == cur_line
+                  break
+            endif
+            let cur_line = line('.')
+      endwhile
+      call winrestview(view)
+      call filter(folds, {idx, val -> val.end > 0})
+      return folds
+endfunction
