@@ -9,3 +9,4 @@ augroup scrollbar
   autocmd!
   autocmd VimEnter,CursorMoved,CursorMovedI,TextChanged,TextChangedI,TextChangedP * call scrollbar#Setup()
 augroup END
+

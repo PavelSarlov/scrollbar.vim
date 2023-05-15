@@ -1,4 +1,16 @@
-function! scrollbar#Calculate() abort
+let s:SB_BLOCK = ' '
+let s:SB_SIGN = '-'
+let s:SB_DOUBLE_SIGN = '='
+let s:SB_TRIPLE_SIGN = '≡'
+
+highlight ScrollbarBlock guibg=Grey ctermbg=Grey ctermfg=NONE guifg=NONE 
+highlight ScrollbarError ctermfg=Red guifg=Red
+highlight ScrollbarWarning ctermfg=DarkYellow guifg=DarkYellow
+highlight ScrollbarInfo ctermfg=White guifg=white
+highlight ScrollbarHint ctermfg=Yellow guifg=Yellow
+
+function! scrollbar#CalculateBar() abort
+      call scrollbar#GetSigns()
       let [win_top, win_left] = win_screenpos(0)
       let [win_width, win_height] = [winwidth(0), winheight(0)]
       let lines = line('$')
@@ -6,21 +18,21 @@ function! scrollbar#Calculate() abort
       let folds = scrollbar#GetClosedFolds()
 
       for fold in folds
-           let lines = lines - fold.lines 
+            let lines = lines - fold.lines 
       endfor
 
       if lines <= win_height
-            return [[], {}]
+            return v:null
       endif
 
       let scrollbar_scale = 1.0 * win_height / lines
       let scrollbar_height = max([float2nr(ceil(scrollbar_scale * win_height)), 1])
+      let bar = repeat(s:SB_BLOCK, scrollbar_height)
 
       let scroll_pos_coef = 1.0 * line('w0') / lines
       let line_pos = win_top + min([max([float2nr(ceil(scroll_pos_coef * win_height)), 1]), win_height - scrollbar_height + 1]) - 1
       let col_pos = win_left + win_width
 
-      let bar = repeat('▐', scrollbar_height)
 
       return [bar, { 
                         \ 'line': line_pos,
@@ -28,6 +40,7 @@ function! scrollbar#Calculate() abort
                         \ 'minwidth': 1,
                         \ 'maxwidth': 1,
                         \ 'maxheight': win_height,
+                        \ 'highlight': 'ScrollbarBlock'
                         \ }]
 endfunction
 
@@ -39,9 +52,14 @@ function! scrollbar#Show() abort
       call scrollbar#Hide()
 
       try
-            let [bar, options] = scrollbar#Calculate()
-            let b:scrollbar_popup_id = popup_create(bar, options)
-            call popup_show(b:scrollbar_popup_id)
+            let bar = scrollbar#CalculateBar()
+
+            if bar isnot v:null
+                  let [content, options] = bar
+
+                  let b:scrollbar_popup_id = popup_create(content, options)
+                  call popup_show(b:scrollbar_popup_id)
+            endif
       catch
             echomsg "Oops! Scrollbar failed with " . v:exception
       endtry
@@ -96,4 +114,9 @@ function! scrollbar#GetClosedFolds() abort
       call winrestview(view)
       call filter(folds, {idx, val -> val.end > 0})
       return folds
+endfunction
+
+function! scrollbar#GetSigns() abort
+      let buff = bufnr()
+      let signs = sign_getplaced(buff, {'group': '*'})
 endfunction
