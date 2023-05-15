@@ -5,8 +5,6 @@ function! scrollbar#Calculate() abort
       let cur_line = line('.')
       let folds = scrollbar#GetClosedFolds()
 
-      echomsg folds
-
       for fold in folds
            let lines = lines - fold.lines 
       endfor
