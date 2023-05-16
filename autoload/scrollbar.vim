@@ -1,47 +1,79 @@
-let s:SB_BLOCK = ' '
-let s:SB_SIGN = '-'
-let s:SB_DOUBLE_SIGN = '='
-let s:SB_TRIPLE_SIGN = '≡'
+let s:sb_block = ' '
+
+let s:sb_signs_priority = {
+                  \ 'Error': 1,
+                  \ 'Warning': 2,
+                  \ 'Hint': 3,
+                  \ 'Info': 4
+                  \ }
+
+let s:sb_signs = {
+                  \ 1: '-',
+                  \ 2: '=',
+                  \ 3: '≡'
+                  \ }
 
 highlight ScrollbarBlock guibg=Grey ctermbg=Grey ctermfg=NONE guifg=NONE 
 highlight ScrollbarError ctermfg=Red guifg=Red
 highlight ScrollbarWarning ctermfg=DarkYellow guifg=DarkYellow
-highlight ScrollbarInfo ctermfg=White guifg=white
 highlight ScrollbarHint ctermfg=Yellow guifg=Yellow
+highlight ScrollbarInfo ctermfg=White guifg=white
 
 function! scrollbar#CalculateBar() abort
-      call scrollbar#GetSigns()
       let [win_top, win_left] = win_screenpos(0)
       let [win_width, win_height] = [winwidth(0), winheight(0)]
       let lines = line('$')
       let cur_line = line('.')
       let folds = scrollbar#GetClosedFolds()
+      let signs = scrollbar#GetSigns()
+
+      echomsg signs
 
       for fold in folds
             let lines = lines - fold.lines 
       endfor
 
       if lines <= win_height
-            return v:null
+            return
       endif
 
       let scrollbar_scale = 1.0 * win_height / lines
       let scrollbar_height = max([float2nr(ceil(scrollbar_scale * win_height)), 1])
-      let bar = repeat(s:SB_BLOCK, scrollbar_height)
+      let bar = repeat(s:sb_block, scrollbar_height)
 
       let scroll_pos_coef = 1.0 * line('w0') / lines
-      let line_pos = win_top + min([max([float2nr(ceil(scroll_pos_coef * win_height)), 1]), win_height - scrollbar_height + 1]) - 1
-      let col_pos = win_left + win_width
+      let scrollbar_start = win_top + min([max([float2nr(ceil(scroll_pos_coef * win_height)), 1]), win_height - scrollbar_height + 1]) - 1
+      let scrollbar_col = win_left + win_width
 
 
-      return [bar, { 
-                        \ 'line': line_pos,
-                        \ 'col': col_pos,
+      let b:scrollbar_popup_id = popup_create(bar, { 
+                        \ 'line': scrollbar_start,
+                        \ 'col': scrollbar_col,
                         \ 'minwidth': 1,
                         \ 'maxwidth': 1,
                         \ 'maxheight': win_height,
                         \ 'highlight': 'ScrollbarBlock'
-                        \ }]
+                        \ })
+      call popup_show(b:scrollbar_popup_id)
+
+      "       let b:scrollbar_sign_popup_ids = []
+      "       for sign in signs
+      "             let id = popup_create(bar, { 
+      "                               \ 'line': scrollbar_start,
+      "                               \ 'col': scrollbar_col,
+      "                               \ 'minwidth': 1,
+      "                               \ 'maxwidth': 1,
+      "                               \ 'maxheight': win_height,
+      "                               \ 'highlight': 'ScrollbarBlock'
+      "                               \ })
+      "             call popup_show(id)
+      "             call add(b:scrollbar_sign_popup_ids, id)
+      "       endfor
+endfunction
+
+function! scrollbar#CalculateSigns() abort
+      let signs = scrollbar#GetSigns()
+      echomsg signs
 endfunction
 
 function! scrollbar#Show() abort
@@ -49,25 +81,25 @@ function! scrollbar#Show() abort
             return
       endif
 
-      call scrollbar#Hide()
-
       try
-            let bar = scrollbar#CalculateBar()
-
-            if bar isnot v:null
-                  let [content, options] = bar
-
-                  let b:scrollbar_popup_id = popup_create(content, options)
-                  call popup_show(b:scrollbar_popup_id)
-            endif
+            call scrollbar#Hide()
+            call scrollbar#CalculateBar()
       catch
-            echomsg "Oops! Scrollbar failed with " . v:exception
+            echohl ErrorMsg
+            echomsg "Oops! Scrollbar failed with " . v:exception . " at: "
+            echohl None
       endtry
 endfunction
 
 function! scrollbar#Hide() abort
       if exists('b:scrollbar_popup_id')
             call popup_close(b:scrollbar_popup_id)
+      endif
+      if exists('b:scrollbar_sign_popup_ids')
+            for id in b:scrollbar_sign_popup_ids
+                  call popup_close(id)
+            endfor
+            let b:scrollbar_sign_popup_ids = []
       endif
 endfunction
 
@@ -117,6 +149,28 @@ function! scrollbar#GetClosedFolds() abort
 endfunction
 
 function! scrollbar#GetSigns() abort
-      let buff = bufnr()
-      let signs = sign_getplaced(buff, {'group': '*'})
+      let signs = flatten(map(sign_getplaced(bufnr(), {'group': '*'}), {_, val -> val.signs}))
+      return map(signs, { _, val -> 
+                        \ { 
+                        \ 'line': val.lnum,
+                        \ 'priority': scrollbar#GetSignPriority(val.name) 
+                        \ }
+                        \ })
+endfunction
+
+function! scrollbar#GetSignPriority(name) abort
+      for [key, value] in items(s:sb_signs_priority)
+            if (a:name =~ '.*' . key . '.*') 
+                  return value
+            endif
+      endfor
+endfunction
+
+function! scrollbar#GetKeyByValue(dict, value) abort
+      for [k, v] in items(a:dict)
+            if v == a:value
+                  return k
+            endif
+      endfor
+      return v:null
 endfunction
