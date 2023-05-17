@@ -15,7 +15,31 @@ highlight ScrollbarWarningBlock ctermfg=DarkYellow guifg=DarkYellow guibg=DarkGr
 highlight ScrollbarHintBlock    ctermfg=Yellow     guifg=Yellow     guibg=DarkGrey ctermbg=DarkGrey 
 highlight ScrollbarInfoBlock    ctermfg=White      guifg=White      guibg=DarkGrey ctermbg=DarkGrey 
 
-function! scrollbar#UpdateScrollbar() abort
+
+function! scrollbar#Setup() abort
+      if g:scrollbar_enabled
+            call s:Show()
+
+            augroup scrollbar_show_hide
+                  autocmd!
+                  autocmd WinEnter * call s:Show()
+                  autocmd WinLeave * call s:Hide()
+            augroup END
+      endif
+endfunction
+
+function! scrollbar#Disable() abort
+      let g:scrollbar_enabled = 0
+      call s:Hide()
+      silent augroup! scrollbar_show_hide
+endfunction
+
+function! scrollbar#Enable() abort
+      let g:scrollbar_enabled = 1
+      call scrollbar#Setup()
+endfunction
+
+function! s:UpdateScrollbar() abort
       let dims = s:GetDimensions()
       let signs = s:GetSigns()
 
@@ -71,14 +95,14 @@ function! scrollbar#UpdateScrollbar() abort
       endfor
 endfunction
 
-function! scrollbar#Show() abort
+function! s:Show() abort
       if !g:scrollbar_enabled
             return
       endif
 
       try
-            call scrollbar#Hide()
-            call scrollbar#UpdateScrollbar()
+            call s:Hide()
+            call s:UpdateScrollbar()
       catch
             echohl ErrorMsg
             echomsg "Oops! Scrollbar failed with " . v:exception . " at: " . v:throwpoint
@@ -86,7 +110,7 @@ function! scrollbar#Show() abort
       endtry
 endfunction
 
-function! scrollbar#Hide() abort
+function! s:Hide() abort
       if exists('b:scrollbar_popup_id')
             call popup_close(b:scrollbar_popup_id)
       endif
@@ -96,29 +120,6 @@ function! scrollbar#Hide() abort
             endfor
             let b:scrollbar_sign_popup_ids = []
       endif
-endfunction
-
-function! scrollbar#Setup() abort
-      if g:scrollbar_enabled
-            call scrollbar#Show()
-
-            augroup scrollbar_show_hide
-                  autocmd!
-                  autocmd WinEnter * call scrollbar#Show()
-                  autocmd WinLeave * call scrollbar#Hide()
-            augroup END
-      endif
-endfunction
-
-function! scrollbar#Disable() abort
-      let g:scrollbar_enabled = 0
-      call scrollbar#Hide()
-      silent augroup! scrollbar_show_hide
-endfunction
-
-function! scrollbar#Enable() abort
-      let g:scrollbar_enabled = 1
-      call scrollbar#Setup()
 endfunction
 
 function! s:GetClosedFolds() abort
