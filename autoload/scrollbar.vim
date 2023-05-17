@@ -15,34 +15,9 @@ highlight ScrollbarWarningBlock ctermfg=DarkYellow guifg=DarkYellow guibg=DarkGr
 highlight ScrollbarHintBlock    ctermfg=Yellow     guifg=Yellow     guibg=DarkGrey ctermbg=DarkGrey 
 highlight ScrollbarInfoBlock    ctermfg=White      guifg=White      guibg=DarkGrey ctermbg=DarkGrey 
 
-function! s:GetDimensions() abort
-      let [win_top, win_left] = win_screenpos(0)
-      let lines = line('$')
-
-      let folds = scrollbar#GetClosedFolds()
-
-      for fold in folds
-            let lines = lines - fold.lines 
-      endfor
-
-      return {
-                        \ 'win_top': win_top,
-                        \ 'win_left': win_left,
-                        \ 'win_width': winwidth(0),
-                        \ 'win_height': winheight(0),
-                        \ 'win_line': winline(),
-                        \ 'cur_line': line('.'),
-                        \ 'lines': lines
-                        \ }
-endfunction
-
-function! s:CalcScrollbarCoord(coord, lines, win_height) abort
-      return min([max([float2nr(ceil(1.0 * a:coord / a:lines * a:win_height)), 1]), a:win_height])
-endfunction
-
 function! scrollbar#UpdateScrollbar() abort
       let dims = s:GetDimensions()
-      let signs = scrollbar#GetSigns()
+      let signs = s:GetSigns()
 
       if dims.lines <= dims.win_height
             return
@@ -96,9 +71,6 @@ function! scrollbar#UpdateScrollbar() abort
       endfor
 endfunction
 
-function! scrollbar#UpdateSigns() abort
-endfunction
-
 function! scrollbar#Show() abort
       if !g:scrollbar_enabled
             return
@@ -107,7 +79,6 @@ function! scrollbar#Show() abort
       try
             call scrollbar#Hide()
             call scrollbar#UpdateScrollbar()
-            call scrollbar#UpdateSigns()
       catch
             echohl ErrorMsg
             echomsg "Oops! Scrollbar failed with " . v:exception . " at: " . v:throwpoint
@@ -150,7 +121,7 @@ function! scrollbar#Enable() abort
       call scrollbar#Setup()
 endfunction
 
-function! scrollbar#GetClosedFolds() abort
+function! s:GetClosedFolds() abort
       let view = winsaveview()
       let keepj = 'keepj norm!'
       exe keepj 'gg'
@@ -172,20 +143,45 @@ function! scrollbar#GetClosedFolds() abort
       return folds
 endfunction
 
-function! scrollbar#GetSigns() abort
+function! s:GetSigns() abort
       let signs = flatten(map(sign_getplaced(bufnr(), {'group': '*'}), {_, val -> val.signs}))
       return map(signs, { _, val -> 
                         \ { 
                         \ 'line': val.lnum,
-                        \ 'priority': scrollbar#GetSignPriority(val.name) 
+                        \ 'priority': s:GetSignPriority(val.name) 
                         \ }
                         \ })
 endfunction
 
-function! scrollbar#GetSignPriority(name) abort
+function! s:GetSignPriority(name) abort
       for index in range(len(s:sb_signs_priority))
             if (a:name =~ '.*' . s:sb_signs_priority[index] . '.*') 
                   return index
             endif
       endfor
+endfunction
+
+function! s:GetDimensions() abort
+      let [win_top, win_left] = win_screenpos(0)
+      let lines = line('$')
+
+      let folds = s:GetClosedFolds()
+
+      for fold in folds
+            let lines = lines - fold.lines 
+      endfor
+
+      return {
+                        \ 'win_top': win_top,
+                        \ 'win_left': win_left,
+                        \ 'win_width': winwidth(0),
+                        \ 'win_height': winheight(0),
+                        \ 'win_line': winline(),
+                        \ 'cur_line': line('.'),
+                        \ 'lines': lines
+                        \ }
+endfunction
+
+function! s:CalcScrollbarCoord(coord, lines, win_height) abort
+      return min([max([float2nr(ceil(1.0 * a:coord / a:lines * a:win_height)), 1]), a:win_height])
 endfunction
