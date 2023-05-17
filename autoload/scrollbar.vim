@@ -1,20 +1,19 @@
-let s:sb_block = ' '
+let s:sb_block = ''
 
 let s:sb_signs_priority = ['Error', 'Warning', 'Hint', 'Info']
-let s:sb_signs = ['-', '=', '≡']
+let s:sb_signs = ['━', '═']
 
+highlight ScrollbarBlock        ctermfg=DarkBlue   guifg=DarkBlue   guibg=DarkGray ctermbg=DarkGray
 
-highlight ScrollbarBlock guibg=Grey ctermbg=Grey ctermfg=NONE guifg=NONE 
+highlight ScrollbarError        ctermfg=DarkRed    guifg=DarkRed    guibg=NONE     ctermbg=NONE     
+highlight ScrollbarWarning      ctermfg=DarkYellow guifg=DarkYellow guibg=NONE     ctermbg=NONE     
+highlight ScrollbarHint         ctermfg=Yellow     guifg=Yellow     guibg=NONE     ctermbg=NONE     
+highlight ScrollbarInfo         ctermfg=White      guifg=white      guibg=NONE     ctermbg=NONE     
 
-highlight ScrollbarError ctermfg=Red guifg=Red
-highlight ScrollbarWarning ctermfg=DarkYellow guifg=DarkYellow
-highlight ScrollbarHint ctermfg=Yellow guifg=Yellow
-highlight ScrollbarInfo ctermfg=White guifg=white
-
-highlight ScrollbarErrorBlock ctermfg=Red guifg=Red guibg=Grey ctermbg=Grey
-highlight ScrollbarWarningBlock ctermfg=DarkYellow guifg=DarkYellow guibg=Grey ctermbg=Grey
-highlight ScrollbarHintBlock ctermfg=Yellow guifg=Yellow guibg=Grey ctermbg=Grey
-highlight ScrollbarInfoBlock ctermfg=White guifg=White guibg=Grey ctermbg=Grey
+highlight ScrollbarErrorBlock   ctermfg=DarkRed    guifg=DarkRed    guibg=DarkGrey ctermbg=DarkGrey 
+highlight ScrollbarWarningBlock ctermfg=DarkYellow guifg=DarkYellow guibg=DarkGrey ctermbg=DarkGrey 
+highlight ScrollbarHintBlock    ctermfg=Yellow     guifg=Yellow     guibg=DarkGrey ctermbg=DarkGrey 
+highlight ScrollbarInfoBlock    ctermfg=White      guifg=White      guibg=DarkGrey ctermbg=DarkGrey 
 
 function! s:GetDimensions() abort
       let [win_top, win_left] = win_screenpos(0)
@@ -31,6 +30,7 @@ function! s:GetDimensions() abort
                         \ 'win_left': win_left,
                         \ 'win_width': winwidth(0),
                         \ 'win_height': winheight(0),
+                        \ 'win_line': winline(),
                         \ 'cur_line': line('.'),
                         \ 'lines': lines
                         \ }
@@ -49,10 +49,12 @@ function! scrollbar#UpdateScrollbar() abort
       endif
 
       let scrollbar_height = s:CalcScrollbarCoord(dims.win_height, dims.lines, dims.win_height)
-      let bar = repeat(s:sb_block, scrollbar_height)
+      let bar = repeat([s:sb_block], scrollbar_height)
 
-      let scrollbar_start = min([s:CalcScrollbarCoord(line('w0'), dims.lines, dims.win_height) + 1, dims.win_height - scrollbar_height + 1])
+      let scrollbar_start = dims.win_top + min([s:CalcScrollbarCoord(line('w0'), dims.lines, dims.win_height), dims.win_height - scrollbar_height + 1]) - 1
       let scrollbar_col = dims.win_left + dims.win_width
+      let scrollbar_cursor = max([min([float2nr(1.0 * dims.win_line / dims.win_height * scrollbar_height), scrollbar_height - 1]), 0])
+      let bar[scrollbar_cursor] = '*'
 
       let b:scrollbar_popup_id = popup_create(bar, { 
                         \ 'line': scrollbar_start,
@@ -65,18 +67,28 @@ function! scrollbar#UpdateScrollbar() abort
                         \ })
       call popup_show(b:scrollbar_popup_id)
 
-      let b:scrollbar_sign_popup_ids = []
+      let signs_per_line = {}
       for sign in signs
-            let sign_line = s:CalcScrollbarCoord(sign.line, dims.lines, dims.win_height)
+            if has_key(signs_per_line, sign.line)
+                  call add(signs_per_line[sign.line], sign.priority)
+            else
+                  let signs_per_line[sign.line] = [sign.priority]
+            endif
+      endfor
+
+      let b:scrollbar_sign_popup_ids = []
+      for [line, signs] in items(signs_per_line)
+            let sign_line = s:CalcScrollbarCoord(line, dims.lines, dims.win_height)
+            let sorted_signs = sort(signs)
 
             let is_in_bar = sign_line >= scrollbar_start && sign_line <= scrollbar_start + scrollbar_height
 
-            let sign_popup_id = popup_create('-', { 
+            let sign_popup_id = popup_create(s:sb_signs[len(signs) > 1], { 
                               \ 'line': sign_line,
                               \ 'col': scrollbar_col,
                               \ 'minwidth': 1,
                               \ 'maxwidth': 1,
-                              \ 'highlight': 'Scrollbar' . s:sb_signs_priority[sign.priority] . (is_in_bar ? 'Block' : ''),
+                              \ 'highlight': 'Scrollbar' . s:sb_signs_priority[sorted_signs[0]] . (is_in_bar ? 'Block' : ''),
                               \ 'zindex': 2
                               \ })
             call popup_show(sign_popup_id)
