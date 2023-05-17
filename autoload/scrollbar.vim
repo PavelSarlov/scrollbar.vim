@@ -45,10 +45,8 @@ function! scrollbar#UpdateScrollbar() abort
       let scrollbar_height = s:CalcScrollbarCoord(dims.win_height, dims.lines, dims.win_height)
       let bar = repeat(s:sb_block, scrollbar_height)
 
-      " let scrollbar_start = dims.win_top + min([s:CalcScrollbarCoord(line('w0'), dims.lines, dims.win_height), dims.win_height - scrollbar_height + 1]) - 1
-      let scrollbar_start = min([s:CalcScrollbarCoord(line('w0'), dims.lines, dims.win_height) + 1, dims.lines - dims.win_height])
+      let scrollbar_start = min([s:CalcScrollbarCoord(line('w0'), dims.lines, dims.win_height) + 1, dims.win_height - scrollbar_height + 1])
       let scrollbar_col = dims.win_left + dims.win_width
-
 
       let b:scrollbar_popup_id = popup_create(bar, { 
                         \ 'line': scrollbar_start,
@@ -56,23 +54,24 @@ function! scrollbar#UpdateScrollbar() abort
                         \ 'minwidth': 1,
                         \ 'maxwidth': 1,
                         \ 'maxheight': dims.win_height,
-                        \ 'highlight': 'ScrollbarBlock'
+                        \ 'highlight': 'ScrollbarBlock',
+                        \ 'zindex': 1
                         \ })
       call popup_show(b:scrollbar_popup_id)
 
       let b:scrollbar_sign_popup_ids = []
       for sign in signs
-            echomsg sign
-            " let id = popup_create(bar, { 
-            "                   \ 'line': scrollbar_start,
-            "                   \ 'col': scrollbar_col,
-            "                   \ 'minwidth': 1,
-            "                   \ 'maxwidth': 1,
-            "                   \ 'maxheight': win_height,
-            "                   \ 'highlight': 'ScrollbarBlock'
-            "                   \ })
-            " call popup_show(id)
-            " call add(b:scrollbar_sign_popup_ids, id)
+            let sign_line = s:CalcScrollbarCoord(sign.line, dims.lines, dims.win_height)
+            let sign_popup_id = popup_create('-', { 
+                              \ 'line': sign_line,
+                              \ 'col': scrollbar_col,
+                              \ 'minwidth': 1,
+                              \ 'maxwidth': 1,
+                              \ 'highlight': 'Scrollbar' . s:sb_signs_priority[sign.priority],
+                              \ 'zindex': 2
+                              \ })
+            call popup_show(sign_popup_id)
+            call add(b:scrollbar_sign_popup_ids, sign_popup_id)
       endfor
 endfunction
 
