@@ -2,12 +2,12 @@ let s:sb_block = ''
 
 function! scrollbar#Setup() abort
       if g:scrollbar_enabled
-            call s:Show()
+            call scrollbar#Show()
 
             augroup scrollbar_show_hide
                   autocmd!
-                  autocmd WinEnter * call s:Show()
-                  autocmd WinLeave * call s:Hide()
+                  autocmd WinEnter * call scrollbar#Show()
+                  autocmd WinLeave * call scrollbar#Hide()
             augroup END
       endif
 
@@ -19,7 +19,7 @@ function! scrollbar#Disable() abort
       call scrollbar#cursor#Disable()
 
       let g:scrollbar_enabled = 0
-      call s:Hide()
+      call scrollbar#Hide()
       silent! augroup! scrollbar_show_hide
 endfunction
 
@@ -29,7 +29,7 @@ function! scrollbar#Enable() abort
 endfunction
 
 function! s:Update() abort
-      call s:Hide()
+      call scrollbar#Hide()
 
       let dims = scrollbar#helpers#GetDimensions()
       let lines = scrollbar#helpers#GetLines()
@@ -54,7 +54,7 @@ function! s:Update() abort
       call popup_show(b:scrollbar_popup_id)
 endfunction
 
-function! s:Show() abort
+function! scrollbar#Show() abort
       if !g:scrollbar_enabled
             return
       endif
@@ -69,7 +69,7 @@ function! s:Show() abort
       endtry
 endfunction
 
-function! s:Hide() abort
+function! scrollbar#Hide() abort
       if exists('b:scrollbar_popup_id')
             call popup_close(b:scrollbar_popup_id)
       endif
