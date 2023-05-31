@@ -41,7 +41,6 @@ function! s:Update() abort
       let b:scrollbar_height = scrollbar#helpers#CalcScrollbarCoord(dims.win_height, lines.total)
       let b:scrollbar_start = dims.win_top + min([scrollbar#helpers#CalcScrollbarCoord(line('w0'), lines.total) - 1, dims.win_height - b:scrollbar_height + 1]) - 1
       let b:scrollbar_col = dims.win_left + dims.win_width
-      " let scrollbar_cursor = max([min([float2nr(1.0 * dims.win_line / dims.win_height * b:scrollbar_height), b:scrollbar_height - 1]), 0])
 
       let b:scrollbar_popup_id = popup_create(repeat([s:sb_block], b:scrollbar_height), { 
                         \ 'line': b:scrollbar_start,
