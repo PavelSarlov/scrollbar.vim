@@ -29,16 +29,16 @@ if !exists('g:scrollbar_cursor_color')
   let g:scrollbar_cursor_color = "White"
 endif
 
-hi ScrollbarError        ctermfg=DarkRed    guifg=DarkRed    guibg=NONE      ctermbg=NONE
-hi ScrollbarWarning      ctermfg=DarkYellow guifg=DarkYellow guibg=NONE      ctermbg=NONE
-hi ScrollbarHint         ctermfg=Yellow     guifg=Yellow     guibg=NONE      ctermbg=NONE
-hi ScrollbarInfo         ctermfg=White      guifg=white      guibg=NONE      ctermbg=NONE
+hi def ScrollbarError   ctermfg=DarkRed    guifg=DarkRed    guibg=NONE ctermbg=NONE
+hi def ScrollbarWarning ctermfg=DarkYellow guifg=DarkYellow guibg=NONE ctermbg=NONE
+hi def ScrollbarHint    ctermfg=Yellow     guifg=Yellow     guibg=NONE ctermbg=NONE
+hi def ScrollbarInfo    ctermfg=White      guifg=white      guibg=NONE ctermbg=NONE
 
-execute "hi ScrollbarBlock        ctermfg=" . g:scrollbar_cursor_color  . " guifg=" . g:scrollbar_cursor_color . " guibg=" . g:scrollbar_color . " ctermbg=" . g:scrollbar_color
-execute "hi ScrollbarErrorBlock   ctermfg=DarkRed                           guifg=DarkRed                          guibg=" . g:scrollbar_color . " ctermbg=" . g:scrollbar_color
-execute "hi ScrollbarWarningBlock ctermfg=DarkYellow                        guifg=DarkYellow                       guibg=" . g:scrollbar_color . " ctermbg=" . g:scrollbar_color
-execute "hi ScrollbarHintBlock    ctermfg=Yellow                            guifg=Yellow                           guibg=" . g:scrollbar_color . " ctermbg=" . g:scrollbar_color
-execute "hi ScrollbarInfoBlock    ctermfg=White                             guifg=White                            guibg=" . g:scrollbar_color . " ctermbg=" . g:scrollbar_color
+execute "hi def ScrollbarBlock        ctermfg=" . g:scrollbar_cursor_color  . " guifg=" . g:scrollbar_cursor_color . " guibg=" . g:scrollbar_color . " ctermbg=" . g:scrollbar_color
+execute "hi def ScrollbarErrorBlock   ctermfg=DarkRed                           guifg=DarkRed                          guibg=" . g:scrollbar_color . " ctermbg=" . g:scrollbar_color
+execute "hi def ScrollbarWarningBlock ctermfg=DarkYellow                        guifg=DarkYellow                       guibg=" . g:scrollbar_color . " ctermbg=" . g:scrollbar_color
+execute "hi def ScrollbarHintBlock    ctermfg=Yellow                            guifg=Yellow                           guibg=" . g:scrollbar_color . " ctermbg=" . g:scrollbar_color
+execute "hi def ScrollbarInfoBlock    ctermfg=White                             guifg=White                            guibg=" . g:scrollbar_color . " ctermbg=" . g:scrollbar_color
 
 command! ScrollbarEnable call scrollbar#Enable()
 command! ScrollbarDisable call scrollbar#Disable()
