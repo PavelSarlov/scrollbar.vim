@@ -2,12 +2,12 @@ let s:sb_cursor = '*'
 
 function! scrollbar#cursor#Setup() abort
       if g:scrollbar_cursor_enabled && exists('b:scrollbar_height')
-            call s:Show()
+            call scrollbar#cursor#Show()
 
             augroup scrollbar_cursor_show_hide
                   autocmd!
-                  autocmd BufEnter,WinEnter * call s:Show()
-                  autocmd BufLeave,WinLeave * call s:Hide()
+                  autocmd BufEnter,WinEnter * call scrollbar#cursor#Show()
+                  autocmd BufLeave,WinLeave * call scrollbar#cursor#Hide()
             augroup END
       endif
 
@@ -16,7 +16,7 @@ endfunction
 
 function! scrollbar#cursor#Disable() abort
       let g:scrollbar_cursor_enabled = 0
-      call s:Hide()
+      call scrollbar#cursor#Hide()
       silent! augroup! scrollbar_cursor_show_hide
 endfunction
 
@@ -25,7 +25,7 @@ function! scrollbar#cursor#Enable() abort
       call scrollbar#cursor#Setup()
 endfunction
 
-function! s:Show() abort
+function! scrollbar#cursor#Show() abort
       if !g:scrollbar_cursor_enabled
             return
       endif
@@ -39,14 +39,18 @@ function! s:Show() abort
       endtry
 endfunction
 
-function! s:Hide() abort
+function! scrollbar#cursor#Hide() abort
       if exists('b:scrollbar_cursor_popup_id')
             call popup_close(b:scrollbar_cursor_popup_id)
       endif
 endfunction
 
 function! s:Update() abort
-      call s:Hide()
+      call scrollbar#cursor#Hide()
+
+      if !exists('b:scrollbar_col')
+            return
+      endif
 
       let dims = scrollbar#helpers#GetDimensions()
       let lines = scrollbar#helpers#GetLines()
