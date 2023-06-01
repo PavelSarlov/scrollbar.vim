@@ -42,6 +42,10 @@ endfunction
 function! scrollbar#signs#Update(timer) abort
       call scrollbar#signs#Hide()
 
+      if !exists('b:scrollbar_col')
+            return
+      endif
+
       let dims = scrollbar#helpers#GetDimensions()
       let lines = scrollbar#helpers#GetLines()
 
