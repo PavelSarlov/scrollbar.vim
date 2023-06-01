@@ -6,8 +6,8 @@ function! scrollbar#Setup() abort
 
             augroup scrollbar_show_hide
                   autocmd!
-                  autocmd WinEnter * call scrollbar#Show()
-                  autocmd WinLeave * call scrollbar#Hide()
+                  autocmd BufEnter,WinEnter * call scrollbar#Show()
+                  autocmd BufLeave,WinLeave * call scrollbar#Hide()
             augroup END
       endif
 
@@ -38,8 +38,8 @@ function! s:Update() abort
             return
       endif
 
-      let b:scrollbar_height = scrollbar#helpers#CalcScrollbarCoord(dims.win_height, lines.total)
-      let b:scrollbar_start = dims.win_top + min([scrollbar#helpers#CalcScrollbarCoord(line('w0'), lines.total) - 1, dims.win_height - b:scrollbar_height + 1]) - 1
+      let b:scrollbar_height = min([max([float2nr(ceil(1.0 * dims.win_height / lines.total * dims.win_height)), 1]), dims.win_height])
+      let b:scrollbar_start = min([scrollbar#helpers#CalcScrollbarCoord(line('w0'), lines.total), dims.win_top + dims.win_height - b:scrollbar_height])
       let b:scrollbar_col = dims.win_left + dims.win_width
 
       let b:scrollbar_popup_id = popup_create(repeat([s:sb_block], b:scrollbar_height), { 

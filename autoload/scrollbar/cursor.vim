@@ -6,8 +6,8 @@ function! scrollbar#cursor#Setup() abort
 
             augroup scrollbar_cursor_show_hide
                   autocmd!
-                  autocmd WinEnter * call s:Show()
-                  autocmd WinLeave * call s:Hide()
+                  autocmd BufEnter,WinEnter * call s:Show()
+                  autocmd BufLeave,WinLeave * call s:Hide()
             augroup END
       endif
 

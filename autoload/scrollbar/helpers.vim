@@ -1,6 +1,6 @@
 function! scrollbar#helpers#CalcScrollbarCoord(coord, total_lines) abort
-      let win_height = winheight(0)
-      return min([max([float2nr(ceil(1.0 * a:coord / a:total_lines * win_height)), 1]), win_height]) + 1
+      let dims = scrollbar#helpers#GetDimensions()
+      return dims.win_top + min([max([float2nr(ceil(1.0 * a:coord / a:total_lines * dims.win_height)), 1]), dims.win_height]) - 1
 endfunction
 
 function! scrollbar#helpers#IsInsideScrollbar(line) abort

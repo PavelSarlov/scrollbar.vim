@@ -1,21 +1,21 @@
 let s:sb_signs_priority = ['Error', 'Warning', 'Hint', 'Info']
-let s:sb_signs = ['-', '═']
+let s:sb_signs = ['━', '═']
 
 function! scrollbar#signs#Setup() abort
       if g:scrollbar_signs_enabled && exists('b:scrollbar_height') 
-            call s:Show()
+            call scrollbar#signs#Show()
 
             augroup scrollbar_signs_show_hide
                   autocmd!
-                  autocmd WinEnter * call s:Show()
-                  autocmd WinLeave * call s:Hide()
+                  autocmd BufWinEnter,WinEnter * call scrollbar#signs#Show()
+                  autocmd BufWinLeave,WinLeave * call scrollbar#signs#Hide()
             augroup END
       endif
 endfunction
 
 function! scrollbar#signs#Disable() abort
       let g:scrollbar_signs_enabled = 0
-      call s:Hide()
+      call scrollbar#signs#Hide()
       silent! augroup! scrollbar_signs_show_hide
 endfunction
 
@@ -24,7 +24,7 @@ function! scrollbar#signs#Enable() abort
       call scrollbar#signs#Setup()
 endfunction
 
-function! s:Show() abort
+function! scrollbar#signs#Show() abort
       if !g:scrollbar_signs_enabled
             return
       endif
@@ -40,7 +40,7 @@ function! s:Show() abort
 endfunction
 
 function! scrollbar#signs#Update(timer) abort
-      call s:Hide()
+      call scrollbar#signs#Hide()
 
       let dims = scrollbar#helpers#GetDimensions()
       let lines = scrollbar#helpers#GetLines()
@@ -78,7 +78,7 @@ function! scrollbar#signs#Update(timer) abort
       endfor
 endfunction
 
-function! s:Hide() abort
+function! scrollbar#signs#Hide() abort
       if exists('b:signs_update_timer')
             call timer_stop(b:signs_update_timer)
       endif
