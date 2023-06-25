@@ -1,26 +1,12 @@
 let s:sb_block = ''
 
-function! scrollbar#DefineHl()
-  hi def ScrollbarError   ctermfg=DarkRed    guifg=DarkRed    guibg=NONE ctermbg=NONE
-  hi def ScrollbarWarning ctermfg=DarkYellow guifg=DarkYellow guibg=NONE ctermbg=NONE
-  hi def ScrollbarHint    ctermfg=Yellow     guifg=Yellow     guibg=NONE ctermbg=NONE
-  hi def ScrollbarInfo    ctermfg=White      guifg=white      guibg=NONE ctermbg=NONE
-
-  execute "hi def ScrollbarBlock        ctermfg=" . g:scrollbar_cursor_term_color  . " guifg=" . g:scrollbar_cursor_gui_color . " guibg=" . g:scrollbar_gui_color . " ctermbg=" . g:scrollbar_term_color
-  execute "hi def ScrollbarErrorBlock   ctermfg=DarkRed                           guifg=DarkRed                          guibg=" . g:scrollbar_gui_color . " ctermbg=" . g:scrollbar_term_color
-  execute "hi def ScrollbarWarningBlock ctermfg=DarkYellow                        guifg=DarkYellow                       guibg=" . g:scrollbar_gui_color . " ctermbg=" . g:scrollbar_term_color
-  execute "hi def ScrollbarHintBlock    ctermfg=Yellow                            guifg=Yellow                           guibg=" . g:scrollbar_gui_color . " ctermbg=" . g:scrollbar_term_color
-  execute "hi def ScrollbarInfoBlock    ctermfg=White                             guifg=White                            guibg=" . g:scrollbar_gui_color . " ctermbg=" . g:scrollbar_term_color
-endfunction
-
 function! scrollbar#Setup() abort
       if g:scrollbar_enabled
             call scrollbar#Show()
 
             augroup scrollbar_show_hide
                   autocmd!
-                  autocmd ColorScheme * call scrollbar#DefineHl()
-                  autocmd BufEnter,WinEnter * call scrollbar#Show()
+                  autocmd ColorScheme * call scrollbar#helpers#DefineHl()
                   autocmd BufLeave,WinLeave * call scrollbar#Hide()
             augroup END
       endif
@@ -29,9 +15,6 @@ function! scrollbar#Setup() abort
 endfunction
 
 function! scrollbar#Disable() abort
-      call scrollbar#signs#Disable()
-      call scrollbar#cursor#Disable()
-
       let g:scrollbar_enabled = 0
       call scrollbar#Hide()
       silent! augroup! scrollbar_show_hide

@@ -11,15 +11,11 @@ if !exists("g:scrollbar_enabled")
 endif
 
 if exists('g:scrollbar_signs_enabled')
-  let g:scrollbar_signs_enabled = g:scrollbar_enabled ? g:scrollbar_signs_enabled : 0
-else
-  let g:scrollbar_signs_enabled = g:scrollbar_enabled
+  let g:scrollbar_signs_enabled = 0
 endif
 
 if exists('g:scrollbar_cursor_enabled')
-  let g:scrollbar_cursor_enabled = g:scrollbar_enabled ? g:scrollbar_cursor_enabled : 0
-else
-  let g:scrollbar_cursor_enabled = g:scrollbar_enabled
+  let g:scrollbar_cursor_enabled = 0
 endif
 
 if !exists('g:scrollbar_term_color')
@@ -32,22 +28,58 @@ if !exists('g:scrollbar_gui_color')
   let g:scrollbar_gui_color = "#8AADF4"
 endif
 if !exists('g:scrollbar_cursor_gui_color')
-  let g:scrollbar_cursor_gui_color = "#000000"
+  let g:scrollbar_cursor_gui_color = "#FFFFFF"
 endif
 
-call scrollbar#DefineHl()
+call scrollbar#helpers#DefineHl()
 
 command! ScrollbarEnable call scrollbar#Enable()
 command! ScrollbarDisable call scrollbar#Disable()
+command! ScrollbarSignsEnable call scrollbar#signs#Enable()
+command! ScrollbarSignsDisable call scrollbar#signs#Disable()
+command! ScrollbarCursorEnable call scrollbar#cursor#Enable()
+command! ScrollbarCursorDisable call scrollbar#cursor#Disable()
+
+function EmitLinesChanged() abort
+  if !exists('b:current_lines')
+    let b:current_lines = line('$')
+  endif
+  if b:current_lines != line('$')
+    let b:current_lines = line('$')
+    doautocmd User LinesChanged
+  endif
+endfunction
+
+function EmitCursorMovedVertically() abort
+  if !exists('b:current_cursor_pos')
+    let b:current_cursor_pos = line('.')
+  endif
+  if b:current_cursor_pos != line('.')
+    let b:current_cursor_pos = line('.')
+    doautocmd User CursorMovedVertically
+  endif
+endfunction
+
+augroup lines_changed
+  autocmd!
+  autocmd TextChanged,TextChangedI,TextChangedP * call EmitLinesChanged()
+augroup END
+
+augroup cursor_moved_vertically
+  autocmd!
+  autocmd CursorMoved,CursorMovedI * call EmitCursorMovedVertically()
+augroup END
 
 augroup scrollbar_setup
   autocmd!
-  autocmd QuitPre,WinEnter,FocusGained,WinScrolled,VimResized,VimEnter,TextChanged,TextChangedI,TextChangedP * call scrollbar#Setup()
+  autocmd WinEnter,FocusGained,WinScrolled,VimResized,VimEnter * call scrollbar#Setup()
+  autocmd User LinesChanged call scrollbar#Setup()
 augroup END
 
 augroup scrollbar_cursor_setup
   autocmd!
-  autocmd QuitPre,WinEnter,FocusGained,WinScrolled,VimResized,VimEnter,TextChanged,TextChangedI,TextChangedP,CursorMoved,CursorMovedI * call scrollbar#cursor#Setup()
+  autocmd WinEnter,FocusGained,WinScrolled,VimResized,VimEnter * call scrollbar#cursor#Setup()
+  autocmd User CursorMovedVertically call scrollbar#cursor#Setup()
 augroup END
 
 let &cpo = s:keepcpo

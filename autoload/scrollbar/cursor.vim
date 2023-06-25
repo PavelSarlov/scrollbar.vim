@@ -6,7 +6,6 @@ function! scrollbar#cursor#Setup() abort
 
             augroup scrollbar_cursor_show_hide
                   autocmd!
-                  autocmd BufEnter,WinEnter * call scrollbar#cursor#Show()
                   autocmd BufLeave,WinLeave * call scrollbar#cursor#Hide()
             augroup END
       endif
@@ -66,7 +65,7 @@ function! s:Update() abort
                         \ 'col': b:scrollbar_col,
                         \ 'minwidth': 1,
                         \ 'maxwidth': 1,
-                        \ 'highlight': 'ScrollbarBlock',
+                        \ 'highlight': g:scrollbar_enabled ? 'ScrollbarBlock' : 'ScrollbarCursorBlock',
                         \ 'zindex': 2
                         \ })
       call popup_show(b:scrollbar_cursor_popup_id)

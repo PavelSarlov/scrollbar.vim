@@ -7,7 +7,6 @@ function! scrollbar#signs#Setup() abort
 
             augroup scrollbar_signs_show_hide
                   autocmd!
-                  autocmd BufWinEnter,WinEnter * call scrollbar#signs#Show()
                   autocmd BufWinLeave,WinLeave * call scrollbar#signs#Hide()
             augroup END
       endif
