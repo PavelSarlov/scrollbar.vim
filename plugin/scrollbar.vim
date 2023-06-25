@@ -10,12 +10,12 @@ if !exists("g:scrollbar_enabled")
   let g:scrollbar_enabled = 0
 endif
 
-if exists('g:scrollbar_signs_enabled')
-  let g:scrollbar_signs_enabled = 0
+if !exists('g:scrollbar_signs_enabled')
+  let g:scrollbar_signs_enabled = g:scrollbar_enabled
 endif
 
-if exists('g:scrollbar_cursor_enabled')
-  let g:scrollbar_cursor_enabled = 0
+if !exists('g:scrollbar_cursor_enabled')
+  let g:scrollbar_cursor_enabled = g:scrollbar_enabled
 endif
 
 if !exists('g:scrollbar_term_color')
@@ -33,12 +33,26 @@ endif
 
 call scrollbar#helpers#DefineHl()
 
+function DisableAll() abort
+  call scrollbar#Disable()
+  call scrollbar#signs#Disable()
+  call scrollbar#cursor#Disable()
+endfunction
+
+function EnableAll() abort
+  call scrollbar#Enable()
+  call scrollbar#signs#Enable()
+  call scrollbar#cursor#Enable()
+endfunction
+
 command! ScrollbarEnable call scrollbar#Enable()
 command! ScrollbarDisable call scrollbar#Disable()
 command! ScrollbarSignsEnable call scrollbar#signs#Enable()
 command! ScrollbarSignsDisable call scrollbar#signs#Disable()
 command! ScrollbarCursorEnable call scrollbar#cursor#Enable()
 command! ScrollbarCursorDisable call scrollbar#cursor#Disable()
+command! ScrollbarDisableAll call DisableAll()
+command! ScrollbarEnableAll call EnableAll()
 
 function EmitLinesChanged() abort
   if !exists('b:current_lines')
