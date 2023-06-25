@@ -1,0 +1,107 @@
+*scrollbar.txt*	A scrollbar using the popup API
+
+==============================================================================
+CONTENTS                                    *scrollbar*   *scrollbar-contents*
+
+    About.......................................: |scrollbar-about|
+    Installation................................: |scrollbar-installation|
+    Commands....................................: |scrollbar-commands|
+    Settings....................................: |scrollbar-settings|
+    Internals...................................: |scrollbar-internals|
+
+==============================================================================
+ABOUT                                                          *scrollbar-about*
+
+Should be obvious what this is about by the name. Although there are some
+additional features to scrollbar like showing error/warning/info signs and
+showing cursor position.
+
+==============================================================================
+INSTALLATION                                            *scrollbar-installation*
+
+You can use a plugin manager, for example:
+
+vim-plug:
+
+    `Plug 'PavelSarlov/scrollbar.vim'`
+
+Vundle:
+
+    `Plugin 'PavelSarlov/scrollbar.vim'`
+
+Or if you hate your life just manually clone the repo in your vim config.
+
+==============================================================================
+COMMANDS                                                    *scrollbar-commands*
+
+These commands are local to the buffers in which they work.
+
+                                                            *:ScrollbarEnable*
+:ScrollbarEnable                Enables the scrollbar itself.
+
+                                                            *:ScrollbarDisable*
+:ScrollbarDisable               Disables the scrollbar itself.
+
+                                                            *:ScrollbarSignsDisable*
+:ScrollbarSignsEnable           Enables the scrollbar signs.
+
+                                                            *:ScrollbarSignsDisable*
+:ScrollbarSignsDisable          Disables the scrollbar signs.
+
+                                                            *:ScrollbarCursorDisable*
+:ScrollbarCursorEnable          Enables the scrollbar cursor.
+
+                                                            *:ScrollbarCursorDisable*
+:ScrollbarCursorDisable         Disables the scrollbar cursor.
+
+                                                            *:ScrollbarEnableAll*
+:ScrollbarEnableAll             Enables all scrollbar features.
+
+                                                            *:ScrollbarDisableAll*
+:ScrollbarDisableAll            Disables all scrollbar features.
+
+==============================================================================
+SETTINGS                                                    *scrollbar-settings*
+
+A humble number of global variables are provided for easy customization.
+The examples below show the default value used.
+
+                                                            *g:scrollbar_enabled*
+                                                      *g:scrollbar_signs_enabled*
+                                                     *g:scrollbar_cursor_enabled*
+
+    `let g:scrollbar_enabled = 0`
+    `let g:scrollbar_signs_enabled = g:scrollbar_enabled`
+    `let g:scrollbar_cursor_enabled = g:scrollbar_enabled`
+
+You can set `g:scrollbar_enabled` to 1 if you want to see the scrollbar on
+startup by default.
+
+                                                         *g:scrollbar_term_color*
+                                                          *g:scrollbar_gui_color*
+                                                  *g:scrollbar_cursor_term_color*
+                                                   *g:scrollbar_cursor_gui_color*
+
+    `let g:scrollbar_term_color = "DarkBlue"`
+    `let g:scrollbar_gui_color = "#8AADF4"`
+    `let g:scrollbar_cursor_term_color = "White"`
+    `let g:scrollbar_cursor_gui_color = "#FFFFFF"`
+
+You can set those according to your desired colorscheme.
+
+
+==============================================================================
+INTERNALS                                                  *scrollbar-internals*
+
+The plugin uses |create| to open a popup window on the right-hand side of the 
+current window. The "enable" command adds autocommands to automatically
+destroy that popup and show a new one on certain events like resizing a
+window, scrolling, etc.
+
+For the signs, |timer_start| is used which checks every second for new signs
+that contain `Error`, `Warning`, `Hint`, `Info` and displays them with their
+corresponding highlighting.
+
+
+
+vim:tw=78:sw=4:ft=help:norl:
