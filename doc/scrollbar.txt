@@ -3,14 +3,15 @@
 ==============================================================================
 CONTENTS                                    *scrollbar*   *scrollbar-contents*
 
-    About.......................................: |scrollbar-about|
+    Introduction................................: |scrollbar-Introduction|
     Installation................................: |scrollbar-installation|
     Commands....................................: |scrollbar-commands|
     Settings....................................: |scrollbar-settings|
     Internals...................................: |scrollbar-internals|
+    About.......................................: |scrollbar-about|
 
 ==============================================================================
-ABOUT                                                          *scrollbar-about*
+INTRODUCTION                                            *scrollbar-Introduction*
 
 Should be obvious what this is about by the name. Although there are some
 additional features to scrollbar like showing error/warning/info signs and
@@ -89,7 +90,6 @@ startup by default.
 
 You can set those according to your desired colorscheme.
 
-
 ==============================================================================
 INTERNALS                                                  *scrollbar-internals*
 
@@ -102,6 +102,12 @@ For the signs, |timer_start| is used which checks every second for new signs
 that contain `Error`, `Warning`, `Hint`, `Info` and displays them with their
 corresponding highlighting.
 
+==============================================================================
+ABOUT                                                          *scrollbar-about*
+
+Grab the latest version or report a bug on GitHub:
+
+https://github.com/PavelSarlov/scrollbar.vim
 
 
 vim:tw=78:sw=4:ft=help:norl:
