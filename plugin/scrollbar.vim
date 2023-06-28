@@ -25,7 +25,7 @@ if !exists('g:scrollbar_cursor_term_color')
   let g:scrollbar_cursor_term_color = "White"
 endif
 if !exists('g:scrollbar_gui_color')
-  let g:scrollbar_gui_color = "#8AADF4"
+  let g:scrollbar_gui_color = "#494d64"
 endif
 if !exists('g:scrollbar_cursor_gui_color')
   let g:scrollbar_cursor_gui_color = "#FFFFFF"

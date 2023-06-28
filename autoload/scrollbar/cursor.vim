@@ -1,7 +1,7 @@
 let s:sb_cursor = '*'
 
 function! scrollbar#cursor#Setup() abort
-      if g:scrollbar_cursor_enabled && exists('b:scrollbar_height')
+      if g:scrollbar_cursor_enabled && exists('b:scrollbar_height') && b:scrollbar_height > 1
             call scrollbar#cursor#Show()
 
             augroup scrollbar_cursor_show_hide
