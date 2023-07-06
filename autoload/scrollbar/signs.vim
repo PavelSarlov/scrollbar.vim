@@ -1,13 +1,13 @@
 let s:sb_signs_priority = ['Error', 'Warning', 'Hint', 'Info']
-let s:sb_signs = ['━', '═']
+let s:sb_signs = ['-', '=']
 
 function! scrollbar#signs#Setup() abort
       if g:scrollbar_signs_enabled && exists('b:scrollbar_height') 
-            call scrollbar#signs#Show()
+            call scrollbar#signs#Show({})
 
             augroup scrollbar_signs_show_hide
                   autocmd!
-                  autocmd BufWinLeave,WinLeave * call scrollbar#signs#Hide()
+                  autocmd BufLeave,WinLeave * call scrollbar#signs#Hide()
             augroup END
       endif
 endfunction
@@ -23,14 +23,14 @@ function! scrollbar#signs#Enable() abort
       call scrollbar#signs#Setup()
 endfunction
 
-function! scrollbar#signs#Show() abort
+function! scrollbar#signs#Show(timer) abort
       if !g:scrollbar_signs_enabled
             return
       endif
 
       try
-            call scrollbar#signs#Update({})
-            let b:signs_update_timer = timer_start(1000, function('scrollbar#signs#Update'), { 'repeat': -1 })
+            call scrollbar#signs#Update()
+            let b:signs_update_timer = timer_start(1000, function('scrollbar#signs#Show'), { 'repeat': -1 })
       catch
             echohl ErrorMsg
             echomsg "Oops! Scrollbar signs failed with " . v:exception . " at: " . v:throwpoint
@@ -38,7 +38,7 @@ function! scrollbar#signs#Show() abort
       endtry
 endfunction
 
-function! scrollbar#signs#Update(timer) abort
+function! scrollbar#signs#Update() abort
       call scrollbar#signs#Hide()
 
       if !exists('b:scrollbar_col')

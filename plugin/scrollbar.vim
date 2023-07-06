@@ -90,6 +90,11 @@ augroup scrollbar_setup
   autocmd User LinesChanged call scrollbar#Setup()
 augroup END
 
+augroup scrollbar_signs_setup
+  autocmd!
+  autocmd WinEnter,VimEnter * call scrollbar#signs#Setup()
+augroup END
+
 augroup scrollbar_cursor_setup
   autocmd!
   autocmd WinEnter,FocusGained,WinScrolled,VimResized,VimEnter * call scrollbar#cursor#Setup()

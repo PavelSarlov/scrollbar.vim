@@ -10,8 +10,6 @@ function! scrollbar#Setup() abort
                   autocmd BufLeave,WinLeave * call scrollbar#Hide()
             augroup END
       endif
-
-      call scrollbar#signs#Setup()
 endfunction
 
 function! scrollbar#Disable() abort
@@ -58,7 +56,6 @@ function! scrollbar#Show() abort
 
       try
             call s:Update()
-            call scrollbar#signs#Update({})
       catch
             echohl ErrorMsg
             echomsg "Oops! Scrollbar failed with " . v:exception . " at: " . v:throwpoint

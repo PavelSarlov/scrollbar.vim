@@ -9,8 +9,6 @@ function! scrollbar#cursor#Setup() abort
                   autocmd BufLeave,WinLeave * call scrollbar#cursor#Hide()
             augroup END
       endif
-
-      call scrollbar#signs#Setup()
 endfunction
 
 function! scrollbar#cursor#Disable() abort
