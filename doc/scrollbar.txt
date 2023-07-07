@@ -3,7 +3,7 @@
 ==============================================================================
 CONTENTS                                    *scrollbar*   *scrollbar-contents*
 
-    Introduction................................: |scrollbar-Introduction|
+    Introduction................................: |scrollbar-introduction|
     Installation................................: |scrollbar-installation|
     Commands....................................: |scrollbar-commands|
     Settings....................................: |scrollbar-settings|
@@ -11,7 +11,7 @@ CONTENTS                                    *scrollbar*   *scrollbar-contents*
     About.......................................: |scrollbar-about|
 
 ==============================================================================
-INTRODUCTION                                            *scrollbar-Introduction*
+INTRODUCTION                                            *scrollbar-introduction*
 
 Should be obvious what this is about by the name. Although there are some
 additional features to scrollbar like showing error/warning/info signs and
@@ -43,13 +43,13 @@ These commands are local to the buffers in which they work.
                                                             *:ScrollbarDisable*
 :ScrollbarDisable               Disables the scrollbar itself.
 
-                                                            *:ScrollbarSignsDisable*
+                                                            *:ScrollbarSignsEnable*
 :ScrollbarSignsEnable           Enables the scrollbar signs.
 
                                                             *:ScrollbarSignsDisable*
 :ScrollbarSignsDisable          Disables the scrollbar signs.
 
-                                                            *:ScrollbarCursorDisable*
+                                                            *:ScrollbarCursorEnable*
 :ScrollbarCursorEnable          Enables the scrollbar cursor.
 
                                                             *:ScrollbarCursorDisable*
