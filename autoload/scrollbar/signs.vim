@@ -19,7 +19,7 @@ function! scrollbar#signs#Disable() abort
 endfunction
 
 function! scrollbar#signs#Enable() abort
-      let g:scrollbar_enabled = 1
+      let g:scrollbar_signs_enabled = 1
       call scrollbar#signs#Setup()
 endfunction
 
