@@ -1,6 +1,12 @@
 # scrollbar.vim
 
-A not that good vim port of [scrollbar.nvim](https://github.com/Xuyuanp/scrollbar.nvim)
+A not that good vim port of [nvim-scrollbar](https://github.com/petertriho/nvim-scrollbar)
+
+---
+
+## Demo
+
+![](./demo.mkv)
 
 ---
 
