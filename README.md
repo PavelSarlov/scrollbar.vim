@@ -6,7 +6,7 @@ A not that good vim port of [nvim-scrollbar](https://github.com/petertriho/nvim-
 
 ## Demo
 
-![](./demo.mkv)
+https://github.com/PavelSarlov/scrollbar.vim/assets/52922541/6f19ef69-5697-4388-8f02-195b83a25058
 
 ---
 
